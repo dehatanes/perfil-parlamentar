@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ParlamentarInvestimento } from '../../shared/models/parlamentarInvestimento.model';
+import { ParlamentarService } from '../../shared/services/parlamentar.service';
+import { ActivatedRoute } from '@angular/router';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-teste-da-debs',
@@ -8,19 +12,44 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class TesteDaDebsComponent implements OnInit {
 
+  parlamentar: ParlamentarInvestimento;
+
   isLoading: boolean;
 
-  constructor(private modalService: NgbModal) { }
+  constructor(
+    private activatedroute: ActivatedRoute,
+    private parlamentarService: ParlamentarService,
+    private modalService: NgbModal,
+  ) { }
 
   ngOnInit(): void {
     this.isLoading = true;
+    this.activatedroute.parent.params.pipe(take(1)).subscribe(params => {
+      this.getParlamentarById(params.id);
+    });
+  }
+
+  getParlamentarById(parlamentarId) {
+    this.parlamentarService
+      .getInvestimentoById(parlamentarId)
+      .pipe(take(1))
+      .subscribe(
+        resp => this.handleRequestResponse(resp),
+        err => this.handleRequestError(err),
+      )
+  }
+
+  handleRequestResponse(resp) {
+    console.log(resp);
+    this.isLoading = false;
+  }
+
+  handleRequestError(error) {
+    console.log('Erro ao buscar parlamentar: ', error);
+    this.isLoading = false;
   }
 
   onClick(content): void {
     this.modalService.open(content, { ariaLabelledBy: 'Sobre' });
-
-    // todo -> this is just temporary toggling the loading so I can check the behavior
-    this.isLoading = !this.isLoading;
   }
-
 }
