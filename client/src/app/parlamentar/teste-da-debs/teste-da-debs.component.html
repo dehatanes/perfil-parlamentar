@@ -1,1 +1,15 @@
-<p>teste-da-debs works!</p>
+<div class="container-sm my-3">
+  <h4 class="title-main my-4">
+    Teste da Debs
+    <span (click)="onClick()" class="icon-question-circle icon-btn-help"></span>
+  </h4>
+  <div *ngIf="isLoading; then loadingComponent else tabContent"></div>
+</div>
+
+<ng-template #loadingComponent>
+  <app-loading></app-loading>
+</ng-template>
+
+<ng-template #tabContent>
+  <p class="text-center">teste-da-debs works!</p>
+</ng-template>
